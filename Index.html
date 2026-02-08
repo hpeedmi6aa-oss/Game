@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>RPG Top-Down - Modular Version</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- UI Stats -->
+    <div id="ui">
+        <div>Level: <span id="level">1</span></div>
+        <div>HP: <span id="hp">100</span>/<span id="maxHp">100</span></div>
+        <div>EXP: <span id="exp">0</span>/<span id="expNeeded">10</span></div>
+        <div>ATK: <span id="atk">10</span></div>
+        <div>Kills: <span id="kills">0</span></div>
+        <div id="fruitInfo">
+            <strong>Buah:</strong> <span id="currentFruit">None</span><br>
+            <span id="fruitEffect"></span>
+        </div>
+        <button id="resetButton" style="margin-top: 10px; padding: 5px 10px; background: #ff4444; border: none; color: white; border-radius: 5px; cursor: pointer; font-size: 12px; pointer-events: all;">Reset Data</button>
+    </div>
+    
+    <!-- Boss HP Bar (Hidden by default) -->
+    <div id="bossHpBar" style="display: none;">
+        <div id="bossName">THE ANCIENT GUARDIAN</div>
+        <div id="bossHpBarContainer">
+            <div id="bossHpBarFill"></div>
+        </div>
+        <div id="bossHpText">10000 / 10000</div>
+    </div>
+    
+    <!-- Quest Tracker (Hidden by default) -->
+    <div id="questTracker" style="display: none;">
+        <div id="questTitle">📜 Misi Aktif</div>
+        <div id="questProgress">Kalahkan Musuh: <span id="questCount">0</span>/<span id="questGoal">15</span></div>
+    </div>
+    
+    <!-- Gacha Button -->
+    <button id="gachaButton">🎲 GACHA</button>
+    
+    <!-- Gacha Notification -->
+    <div id="gachaNotification">
+        <h2 id="fruitName"></h2>
+        <p id="fruitDescription"></p>
+    </div>
+    
+    <!-- NPC Dialog Box (Hidden by default) -->
+    <div id="npcDialog" style="display: none;">
+        <div id="npcDialogContent">
+            <div id="npcName">🧙‍♂️ Sage Guardian</div>
+            <div id="npcText">Bantu aku kalahkan 15 musuh! Jika berhasil, pemimpin mereka akan muncul.</div>
+            <button id="acceptQuestBtn">TERIMA MISI</button>
+            <button id="closeDialogBtn">TUTUP</button>
+        </div>
+    </div>
+    
+    <!-- Cinematic Elements -->
+    <div id="cinematicBars" style="display: none;">
+        <div class="cinematic-bar cinematic-bar-top"></div>
+        <div class="cinematic-bar cinematic-bar-bottom"></div>
+    </div>
+    
+    <div id="cinematicSplash" style="display: none;">
+        <h1 id="cinematicText">THE ANCIENT GUARDIAN</h1>
+        <p id="cinematicSubtext">Prepare for Battle!</p>
+    </div>
+    
+    <div id="bossDefeatedSplash" style="display: none;">
+        <h1>BOSS DEFEATED!</h1>
+        <p>+500 Coins Reward</p>
+    </div>
+    
+    <!-- Respawn Screen -->
+    <div id="respawnScreen" style="display: none;">
+        <div id="respawnContent">
+            <h1>YOU DIED</h1>
+            <p>Don't give up!</p>
+            <button id="respawnButton">RESPAWN</button>
+        </div>
+    </div>
+    
+    <!-- Game Canvas -->
+    <canvas id="gameCanvas"></canvas>
+    
+    <!-- Joystick (Kiri Bawah) -->
+    <div id="joystickContainer">
+        <div id="joystickBase"></div>
+        <div id="joystickStick"></div>
+    </div>
+    
+    <!-- Control Buttons (Kanan Bawah) -->
+    <div id="buttonContainer">
+        <!-- Dash Button -->
+        <div id="dashButton" class="control-button">
+            <span class="button-label">DASH</span>
+        </div>
+        
+        <!-- Attack Button -->
+        <div id="attackButton" class="control-button attack-btn">
+            <span class="button-label">ATTACK</span>
+        </div>
+    </div>
+    
+    <!-- Skill Buttons (Kanan Tengah) -->
+    <div id="skillContainer">
+        <!-- Skill Z -->
+        <div id="skillZ" class="skill-button" data-slot="z">
+            <span class="skill-key">Z</span>
+            <div class="skill-cooldown">
+                <span class="cooldown-text"></span>
+            </div>
+        </div>
+        
+        <!-- Skill X -->
+        <div id="skillX" class="skill-button" data-slot="x">
+            <span class="skill-key">X</span>
+            <div class="skill-cooldown">
+                <span class="cooldown-text"></span>
+            </div>
+        </div>
+        
+        <!-- Skill C -->
+        <div id="skillC" class="skill-button" data-slot="c">
+            <span class="skill-key">C</span>
+            <div class="skill-cooldown">
+                <span class="cooldown-text"></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Zoom Controls (Kanan Atas) -->
+    <div id="zoomControls">
+        <button id="zoomInBtn" class="zoom-btn">+</button>
+        <div id="zoomDisplay">1.0x</div>
+        <button id="zoomOutBtn" class="zoom-btn">−</button>
+    </div>
+    
+    <!-- Active Quests Tracker (Kiri Atas) -->
+    <div id="activeQuestsTracker"></div>
+    
+    <!-- Gacha Dialog (NPC Interaction) -->
+    <div id="gachaDialog" class="npc-dialog" style="display: none;">
+        <div class="dialog-content">
+            <h2>🎲 Gacha Master</h2>
+            <p>Spin the wheel and discover your Devil Fruit!</p>
+            <div class="dialog-info">
+                <p>Cost: <strong>10 Coins</strong></p>
+                <p>Your Coins: <strong id="gachaCoins">0</strong></p>
+            </div>
+            <div class="dialog-buttons">
+                <button id="spinGachaBtn" class="dialog-btn spin-btn">🎰 SPIN!</button>
+                <button onclick="closeGachaDialog()" class="dialog-btn close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quest Dialog (NPC Interaction) -->
+    <div id="questDialog" class="npc-dialog" style="display: none;">
+        <div class="dialog-content">
+            <h2>📜 Quest Giver</h2>
+            <p>I have tasks for brave warriors!</p>
+            <div id="questListContainer"></div>
+            <button onclick="closeQuestDialog()" class="dialog-btn close-btn">Close</button>
+        </div>
+    </div>
+
+    <!-- Load JavaScript (IMPORTANT: Load order matters!) -->
+    <script src="data_fruits.js"></script>
+    <script src="skills.js"></script>
+    <script src="skills_part2.js"></script>
+    <script src="world.js"></script>
+    <script src="camera.js"></script>
+    <script src="npc_system.js"></script>
+    <script src="boss_arena.js"></script>
+    <script src="save_system.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
