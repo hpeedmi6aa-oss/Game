@@ -1,0 +1,950 @@
+/* ==================== RESET & BASE ==================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+body {
+    overflow: hidden;
+    background: #1a1a1a;
+    font-family: 'Arial', sans-serif;
+    touch-action: none;
+}
+
+/* ==================== CANVAS ==================== */
+#gameCanvas {
+    display: block;
+    background: #4a9d4a;
+    margin: 0 auto;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* ==================== UI STATS ==================== */
+#ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    color: white;
+    font-size: 16px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+    pointer-events: none;
+    z-index: 10;
+}
+
+#ui div {
+    margin-bottom: 4px;
+}
+
+#fruitInfo {
+    margin-top: 10px;
+    padding: 8px;
+    background: rgba(0,0,0,0.6);
+    border-radius: 5px;
+    font-size: 14px;
+    border: 2px solid rgba(255,255,255,0.2);
+}
+
+/* ==================== GACHA BUTTON ==================== */
+#gachaButton {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    padding: 12px 24px;
+    background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
+    border: 3px solid #fff;
+    border-radius: 12px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: all 0.2s;
+    pointer-events: all;
+}
+
+#gachaButton:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+/* ==================== GACHA NOTIFICATION ==================== */
+#gachaNotification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 30px 50px;
+    background: rgba(0,0,0,0.95);
+    border: 4px solid #ffd700;
+    border-radius: 20px;
+    color: white;
+    text-align: center;
+    z-index: 100;
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+#gachaNotification.show {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#gachaNotification h2 {
+    font-size: 32px;
+    margin-bottom: 10px;
+    text-shadow: 0 0 20px currentColor;
+}
+
+#gachaNotification p {
+    font-size: 18px;
+    margin-top: 5px;
+}
+
+/* ==================== JOYSTICK ==================== */
+#joystickContainer {
+    position: absolute;
+    bottom: 30px;
+    left: 30px;
+    width: 120px;
+    height: 120px;
+    z-index: 5;
+}
+
+#joystickBase {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(100, 100, 100, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+}
+
+#joystickStick {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(200, 200, 200, 0.7);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    left: 35px;
+    top: 35px;
+    transition: all 0.1s;
+}
+
+/* ==================== CONTROL BUTTONS (Dash & Attack) ==================== */
+#buttonContainer {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 5;
+}
+
+.control-button {
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    background: rgba(50, 150, 255, 0.7);
+    border: 4px solid rgba(100, 180, 255, 0.8);
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+    transition: all 0.1s;
+    position: relative;
+}
+
+.control-button:active {
+    transform: scale(0.95);
+}
+
+.control-button.attack-btn {
+    width: 85px;
+    height: 85px;
+    background: rgba(200, 50, 50, 0.7);
+    border-color: rgba(255, 100, 100, 0.8);
+    font-size: 14px;
+}
+
+.control-button.attack-btn:active {
+    background: rgba(255, 80, 80, 0.9);
+}
+
+.control-button.cooldown {
+    background: rgba(100, 100, 100, 0.5);
+    border-color: rgba(150, 150, 150, 0.5);
+    pointer-events: none;
+}
+
+.button-label {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* ==================== SKILL BUTTONS ==================== */
+#skillContainer {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 5;
+}
+
+.skill-button {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: linear-gradient(145deg, #8b5cf6, #7c3aed);
+    border: 3px solid #a78bfa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+}
+
+.skill-button:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+}
+
+/* Skill Key Label */
+.skill-key {
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.6);
+    z-index: 2;
+}
+
+/* Cooldown Overlay */
+.skill-cooldown {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 3;
+}
+
+.skill-cooldown.active {
+    display: flex;
+}
+
+.cooldown-text {
+    font-size: 22px;
+    font-weight: bold;
+    color: #ff6b6b;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Skill Button States */
+.skill-button.on-cooldown {
+    background: linear-gradient(145deg, #6b7280, #4b5563);
+    border-color: #9ca3af;
+    box-shadow: 0 2px 6px rgba(107, 114, 128, 0.3);
+    pointer-events: none;
+}
+
+.skill-button:not(.on-cooldown):hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(139, 92, 246, 0.6);
+}
+
+/* Individual Skill Colors (optional customization) */
+#skillZ {
+    background: linear-gradient(145deg, #ef4444, #dc2626);
+    border-color: #f87171;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+#skillX {
+    background: linear-gradient(145deg, #3b82f6, #2563eb);
+    border-color: #60a5fa;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+}
+
+#skillC {
+    background: linear-gradient(145deg, #eab308, #ca8a04);
+    border-color: #fde047;
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+}
+
+#skillZ.on-cooldown,
+#skillX.on-cooldown,
+#skillC.on-cooldown {
+    background: linear-gradient(145deg, #6b7280, #4b5563);
+    border-color: #9ca3af;
+    box-shadow: 0 2px 6px rgba(107, 114, 128, 0.3);
+}
+
+/* ==================== RESPONSIVE ADJUSTMENTS ==================== */
+@media (max-width: 768px) {
+    #skillContainer {
+        right: 20px;
+    }
+    
+    .skill-button {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .skill-key {
+        font-size: 22px;
+    }
+    
+    .cooldown-text {
+        font-size: 20px;
+    }
+}
+
+/* ==================== ZOOM CONTROLS ==================== */
+#zoomControls {
+    position: absolute;
+    top: 20px;
+    right: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 8px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.zoom-btn {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(145deg, #4a5568, #2d3748);
+    border: 2px solid #718096;
+    border-radius: 8px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    pointer-events: all;
+}
+
+.zoom-btn:hover {
+    background: linear-gradient(145deg, #5a6678, #3d4758);
+    transform: scale(1.05);
+}
+
+.zoom-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+#zoomDisplay {
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    min-width: 40px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ==================== BOSS HP BAR ==================== */
+#bossHpBar {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 500px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 15px;
+    border: 3px solid #8b0000;
+    display: none;
+    z-index: 15;
+}
+
+#bossName {
+    color: #ff0000;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+/* ==================== ACTIVE QUESTS TRACKER ==================== */
+#activeQuestsTracker {
+    position: absolute;
+    top: 100px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #6b5ce7;
+    min-width: 250px;
+    display: none;
+    z-index: 10;
+}
+
+.active-quest-item {
+    margin-bottom: 10px;
+    padding: 8px;
+    background: rgba(107, 92, 231, 0.2);
+    border-radius: 5px;
+}
+
+.active-quest-item strong {
+    color: #ffffff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.quest-progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 5px 0;
+}
+
+.quest-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #6b5ce7, #9d8ce7);
+    transition: width 0.3s;
+}
+
+.active-quest-item span {
+    color: #ffffff;
+    font-size: 12px;
+}
+
+/* ==================== NPC DIALOGS ==================== */
+.npc-dialog {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.dialog-content {
+    background: linear-gradient(145deg, #2d3748, #1a202c);
+    padding: 30px;
+    border-radius: 15px;
+    border: 3px solid #4a5568;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-content h2 {
+    color: #ffd700;
+    margin: 0 0 10px 0;
+    text-align: center;
+    font-size: 28px;
+    text-shadow: 2px 2px 4px #000000;
+}
+
+.dialog-content p {
+    color: #ffffff;
+    margin: 10px 0;
+    text-align: center;
+}
+
+.dialog-info {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+.dialog-info p {
+    margin: 5px 0;
+    color: #ffffff;
+}
+
+.dialog-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.dialog-btn {
+    flex: 1;
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.spin-btn {
+    background: linear-gradient(145deg, #ffd700, #ffed4e);
+    color: #000000;
+}
+
+.spin-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+}
+
+.close-btn {
+    background: linear-gradient(145deg, #4a5568, #2d3748);
+    color: #ffffff;
+}
+
+.close-btn:hover {
+    background: linear-gradient(145deg, #5a6678, #3d4758);
+}
+
+/* ==================== QUEST LIST ==================== */
+#questListContainer {
+    max-height: 400px;
+    overflow-y: auto;
+    margin: 15px 0;
+}
+
+.quest-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    border-left: 4px solid #6b5ce7;
+}
+
+.quest-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.quest-header strong {
+    color: #ffffff;
+    font-size: 16px;
+}
+
+.quest-status {
+    color: #ffd700;
+    font-size: 14px;
+}
+
+.quest-description {
+    color: #b8b8b8;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.quest-reward {
+    color: #4ade80;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.quest-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.accept-btn {
+    background: linear-gradient(145deg, #6b5ce7, #9d8ce7);
+    color: #ffffff;
+}
+
+.accept-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 3px 10px rgba(107, 92, 231, 0.5);
+}
+
+.complete-btn {
+    background: linear-gradient(145deg, #4ade80, #22c55e);
+    color: #000000;
+}
+
+.complete-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 3px 10px rgba(74, 222, 128, 0.5);
+}
+
+/* ==================== BOSS DEFEATED SCREEN ==================== */
+#bossHpBar {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    max-width: 90%;
+    background: rgba(0, 0, 0, 0.9);
+    border: 3px solid #ff0000;
+    border-top: none;
+    border-radius: 0 0 15px 15px;
+    padding: 15px 20px;
+    z-index: 20;
+    box-shadow: 0 8px 20px rgba(255, 0, 0, 0.5);
+}
+
+#bossName {
+    text-align: center;
+    color: #ff4444;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+#bossHpBarContainer {
+    width: 100%;
+    height: 25px;
+    background: #333;
+    border: 2px solid #666;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+}
+
+#bossHpBarFill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff0000, #ff6600);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
+}
+
+#bossHpText {
+    text-align: center;
+    color: white;
+    font-size: 14px;
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+/* ==================== QUEST TRACKER ==================== */
+#questTracker {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 3px solid #ffd700;
+    border-radius: 10px;
+    padding: 12px 18px;
+    z-index: 15;
+    min-width: 220px;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+#questTitle {
+    color: #ffd700;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    text-shadow: 0 0 8px #ffd700;
+}
+
+#questProgress {
+    color: white;
+    font-size: 14px;
+    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+}
+
+#questCount {
+    color: #00ff00;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+#questGoal {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* ==================== NPC DIALOG BOX ==================== */
+#npcDialog {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    max-width: 90%;
+    z-index: 50;
+}
+
+#npcDialogContent {
+    background: linear-gradient(180deg, rgba(20, 20, 40, 0.98), rgba(10, 10, 30, 0.98));
+    border: 4px solid #6b5ce7;
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    padding: 25px 30px;
+    box-shadow: 0 -8px 30px rgba(107, 92, 231, 0.6);
+}
+
+#npcName {
+    color: #a78bfa;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 12px;
+    text-shadow: 0 0 10px #a78bfa;
+}
+
+#npcText {
+    color: white;
+    font-size: 16px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
+
+#acceptQuestBtn, #closeDialogBtn {
+    padding: 12px 25px;
+    margin-right: 10px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+#acceptQuestBtn {
+    background: linear-gradient(145deg, #10b981, #059669);
+    color: white;
+}
+
+#acceptQuestBtn:active {
+    transform: scale(0.95);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+#closeDialogBtn {
+    background: linear-gradient(145deg, #6b7280, #4b5563);
+    color: white;
+}
+
+#closeDialogBtn:active {
+    transform: scale(0.95);
+}
+
+/* ==================== CINEMATIC ELEMENTS ==================== */
+#cinematicBars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    pointer-events: none;
+}
+
+.cinematic-bar {
+    position: absolute;
+    width: 100%;
+    height: 80px;
+    background: black;
+    animation: slideIn 0.8s ease-out;
+}
+
+.cinematic-bar-top {
+    top: 0;
+}
+
+.cinematic-bar-bottom {
+    bottom: 0;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+#cinematicSplash {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 101;
+    text-align: center;
+    pointer-events: none;
+}
+
+#cinematicText {
+    font-size: 56px;
+    font-weight: bold;
+    color: #ff0000;
+    text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000, 0 4px 8px rgba(0,0,0,0.8);
+    margin-bottom: 15px;
+    letter-spacing: 5px;
+    animation: pulse 1.5s ease-in-out;
+}
+
+#cinematicSubtext {
+    font-size: 24px;
+    color: white;
+    text-shadow: 0 0 15px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.8);
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#bossDefeatedSplash {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: rgba(0, 0, 0, 0.95);
+    border: 5px solid #ffd700;
+    border-radius: 20px;
+    padding: 50px 80px;
+    z-index: 110;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+}
+
+#bossDefeatedSplash.show {
+    animation: bossDefeatPopup 0.5s ease-out forwards;
+}
+
+@keyframes bossDefeatPopup {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+    }
+    70% {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+#bossDefeatedSplash h1 {
+    font-size: 48px;
+    color: #ffd700;
+    text-shadow: 0 0 20px #ffd700, 0 0 40px #ffd700;
+    margin-bottom: 20px;
+}
+
+#bossDefeatedSplash p {
+    font-size: 24px;
+    color: #00ff00;
+    text-shadow: 0 0 10px #00ff00;
+}
+
+/* ==================== RESPAWN SCREEN ==================== */
+#respawnScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 120;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#respawnContent {
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+#respawnContent h1 {
+    font-size: 64px;
+    color: #ff0000;
+    text-shadow: 0 0 30px #ff0000, 0 0 60px #ff0000;
+    margin-bottom: 20px;
+    letter-spacing: 8px;
+}
+
+#respawnContent p {
+    font-size: 24px;
+    color: #ffffff;
+    margin-bottom: 40px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+#respawnButton {
+    padding: 20px 60px;
+    background: linear-gradient(145deg, #10b981, #059669);
+    border: 4px solid #34d399;
+    border-radius: 15px;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.5);
+    transition: all 0.2s;
+    pointer-events: all;
+}
+
+#respawnButton:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.7);
+}
+
+#respawnButton:active {
+    transform: scale(0.95);
+}
